@@ -12,8 +12,11 @@
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
     </style>
+    
   </head>
   <body>
+    <div id="devcheck"> Development Check</div>
+    <div id="connection"></div>
     <ul id="messages"></ul>
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
@@ -22,15 +25,27 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
     $(function () {
+        console.log('check msg');
+
         var socket = io();
         $('form').submit(function(e){
             e.preventDefault(); // prevents page reloading
+            $('#messages').append($('<li>').text($('#m').val() + ' name'));
             socket.emit('chat message', $('#m').val());
             $('#m').val('');
             return false;
         });
         socket.on('chat message', function(msg){
-            $('#messages').append($('<li>').text(msg));
+            $('#messages').append($('<li>').text(msg + ' name'));
+            
+        });
+        socket.on('left', () => {
+            document.getElementById("devcheck").innerHTML = "left feature working";
+            document.getElementById("connection").innerHTML = 'someone left';
+        });
+        socket.on('joined', () => {
+            document.getElementById("devcheck").innerHTML = "joined feature working";
+            document.getElementById("connection").innerHTML = 'someone joined';
         });
     });
     </script>
