@@ -16,7 +16,9 @@
   </head>
   <body>
     <div id="devcheck"> Development Check</div>
+    <div id="username"></div>
     <div id="connection"></div>
+    <div id="onlineusers"></div>
     <ul id="messages"></ul>
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
@@ -28,25 +30,31 @@
         console.log('check msg');
 
         var socket = io();
+        let name = Math.floor((Math.random() * 100) + 1);
+        $(username).text(name)
+        socket.emit('change_username',  { username : $(username).text()}); 
         $('form').submit(function(e){
             e.preventDefault(); // prevents page reloading
-            $('#messages').append($('<li>').text($('#m').val() + ' name'));
+            $('#messages').append($('<li>').text("you: " + $('#m').val()));
             socket.emit('chat message', $('#m').val());
             $('#m').val('');
             return false;
         });
         socket.on('chat message', function(msg){
-            $('#messages').append($('<li>').text(msg + ' name'));
+            $('#messages').append($('<li>').text(msg));
             
         });
-        socket.on('left', () => {
-            document.getElementById("devcheck").innerHTML = "left feature working";
-            document.getElementById("connection").innerHTML = 'someone left';
+        socket.on('left', () => { //when someone leaves
+            $("#devcheck").text("left feature working");
+            $("#connection").text('someone left');
         });
-        socket.on('joined', () => {
-            document.getElementById("devcheck").innerHTML = "joined feature working";
-            document.getElementById("connection").innerHTML = 'someone joined';
+        socket.on('joined', () => { //when someone joins
+            $("#devcheck").text("joined feature working");
+            $("#connection").text('someone joined');
+            //$("connection").text= 'someone joined';
+            
         });
+        
     });
     </script>
   </body>
